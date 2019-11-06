@@ -2,17 +2,16 @@
 
 'use strict';
 
-var colors     = require('colors/safe'),
-    os         = require('os'),
-    httpServer = require('../lib/http-server'),
-    portfinder = require('portfinder'),
-    opener     = require('opener'),
-    argv       = require('optimist')
-      .boolean('cors')
-      .boolean('log-ip')
-      .argv;
-
-var ifaces = os.networkInterfaces();
+var colors = require('colors/safe'), //颜色输出相关
+  os = require('os'), //模块提供了操作系统相关的实用方法 
+  httpServer = require('../lib/http-server'),
+  portfinder = require('portfinder'),
+  opener = require('opener'),
+  argv = require('optimist')
+    .boolean('cors')
+    .boolean('log-ip')
+    .argv;
+var ifaces = os.networkInterfaces(); //方法返回一个对象，包含只有被赋予网络地址的网络接口。
 
 if (argv.h || argv.help) {
   console.log([
@@ -56,11 +55,11 @@ if (argv.h || argv.help) {
 }
 
 var port = argv.p || argv.port || parseInt(process.env.PORT, 10),
-    host = argv.a || '0.0.0.0',
-    ssl = !!argv.S || !!argv.ssl,
-    proxy = argv.P || argv.proxy,
-    utc = argv.U || argv.utc,
-    logger;
+  host = argv.a || '0.0.0.0',
+  ssl = !!argv.S || !!argv.ssl,
+  proxy = argv.P || argv.proxy,
+  utc = argv.U || argv.utc,
+  logger;
 
 if (!argv.s && !argv.silent) {
   logger = {
@@ -68,8 +67,8 @@ if (!argv.s && !argv.silent) {
     request: function (req, res, error) {
       var date = utc ? new Date().toUTCString() : new Date();
       var ip = argv['log-ip']
-          ? req.headers['x-forwarded-for'] || '' +  req.connection.remoteAddress
-          : '';
+        ? req.headers['x-forwarded-for'] || '' + req.connection.remoteAddress
+        : '';
       if (error) {
         logger.info(
           '[%s] %s "%s %s" Error (%s): "%s"',
@@ -89,8 +88,8 @@ if (!argv.s && !argv.silent) {
 }
 else if (colors) {
   logger = {
-    info: function () {},
-    request: function () {}
+    info: function () { },
+    request: function () { }
   };
 }
 
@@ -139,12 +138,12 @@ function listen(port) {
   var server = httpServer.createServer(options);
   server.listen(port, host, function () {
     var canonicalHost = host === '0.0.0.0' ? '127.0.0.1' : host,
-        protocol      = ssl ? 'https://' : 'http://';
+      protocol = ssl ? 'https://' : 'http://';
 
     logger.info([colors.yellow('Starting up http-server, serving '),
-      colors.cyan(server.root),
-      ssl ? (colors.yellow(' through') + colors.cyan(' https')) : '',
-      colors.yellow('\nAvailable on:')
+    colors.cyan(server.root),
+    ssl ? (colors.yellow(' through') + colors.cyan(' https')) : '',
+    colors.yellow('\nAvailable on:')
     ].join(''));
 
     if (argv.a && host !== '0.0.0.0') {
@@ -181,16 +180,16 @@ if (process.platform === 'win32') {
     input: process.stdin,
     output: process.stdout
   }).on('SIGINT', function () {
-    process.emit('SIGINT');
+    process.emit('SIGINT'); //sigint  sigterm sigquit sigkill
   });
 }
 
 process.on('SIGINT', function () {
-  logger.info(colors.red('http-server stopped.'));
+  logger.info(colors.red('http-server stopped2.'));
   process.exit();
 });
 
 process.on('SIGTERM', function () {
-  logger.info(colors.red('http-server stopped.'));
+  logger.info(colors.red('http-server stopped1.'));
   process.exit();
 });
